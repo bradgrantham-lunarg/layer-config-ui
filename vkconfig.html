@@ -1,0 +1,415 @@
+<html>
+<head>
+<style>
+
+/* https://www.w3schools.com/howto/howto_js_tabs.asp */
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* https://www.w3schools.com/howto/howto_js_tabs.asp */
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* https://www.w3schools.com/howto/howto_js_tabs.asp */
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* https://www.w3schools.com/howto/howto_js_tabs.asp */
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* https://www.w3schools.com/howto/howto_js_tabs.asp */
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+th.rotate {
+  /* Something you can count on */
+  height: 70px;
+  white-space: nowrap;
+}
+
+th.rotate > div {
+  transform:
+    /* Magic Numbers */
+     /* translate(25px, 51px) */
+     translate(0px, 20px)
+    /* 315 is really 360 - 45 */
+    rotate(315deg);
+  width: 20px;
+}
+
+th.rotate > div > span {
+  /* border-bottom: 1px solid #ccc;
+  padding: 5px 10px; */
+}
+
+</style>
+<link rel="stylesheet" href="//plunk.org/~grantham/dinnersplit/theme/jquery-ui.min.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link href='//fonts.googleapis.com/css?family=Arimo|Roboto:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+<script type="text/javascript">
+
+var settings_are_changed = false;
+var advanced_settings = false;
+
+function mark_settings_changed()
+{
+    settings_are_changed = true;
+    $("#save_button").prop("disabled", false);
+}
+
+function save_settings()
+{
+    settings_are_changed = false;
+    $("#save_button").prop("disabled", true);
+}
+
+// https://www.w3schools.com/howto/howto_js_tabs.asp
+function open_page(target, pagename)
+{
+  /* if(settings_are_changed ) {
+      if(!window.confirm("Overwrite advanced settings?")) {
+          return;
+      }
+  } */
+
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(pagename).style.display = "block";
+  target.className += " active";
+
+  if(target.id != 'advanced_tab_button') {
+      mark_settings_changed();
+  }
+  console.log(target.id);
+}
+
+function open_pageEvt(evt, pagename)
+{
+    open_page(evt.currentTarget, pagename)
+}
+
+function set_all_layers(what)
+{
+    var x;
+    var l;
+
+    x = document.getElementsByClassName("layer_enable_radio_enable");
+    l = x.length;
+    for (var i = 0; i < l; i++) {
+        x[i].checked = (what == 0) ? true : false;
+    }
+
+    x = document.getElementsByClassName("layer_enable_radio_dontcare");
+    l = x.length;
+    for (var i = 0; i < l; i++) {
+        x[i].checked = (what == 1) ? true : false;
+    }
+
+    x = document.getElementsByClassName("layer_enable_radio_disable");
+    l = x.length;
+    for (var i = 0; i < l; i++) {
+        x[i].checked = (what == 2) ? true : false;
+    }
+    mark_settings_changed();
+}
+
+function expand(tag)
+{
+    var row = document.getElementById(tag + '_settings');
+    row.hidden = !row.hidden;
+    var button = document.getElementById(tag + '_button');
+    if(row.hidden) {
+        button.innerHTML = "+";
+    } else {
+        button.innerHTML = "-";
+    }
+}
+
+function init()
+{
+    open_page($("lwval_tab_button"), "lwval")
+}
+
+$(document).ready(init);
+
+
+</script>
+</head>
+<body>
+
+<div class="tab">
+  <button id="lwval_tab_button" class="tablinks" onclick="open_pageEvt(event, 'lwval')">Normal<br>Validation</button>
+  <button id="lwval_tab_button" class="tablinks" onclick="open_pageEvt(event, 'hwval')">Maximum<br>Validation</button>
+  <button id="syncval_tab_button" class="tablinks" onclick="open_pageEvt(event, 'syncval')">Sync<br>Validation</button>
+  <button id="gpuavval_tab_button" class="tablinks" onclick="open_pageEvt(event, 'gpuavval')">GPU-Assisted<br>Shader<br>Validation</button>
+  <button id="gfxreconstruct_tab_button" class="tablinks" onclick="open_pageEvt(event, 'gfxreconstruct')">GFXReconstruct<br>API Tracing</button>
+  <button id="advanced_tab_button" class="tablinks" onclick="open_pageEvt(event, 'advanced')">Advanced<br>Layer Configuration</button>
+</div>
+
+<div id="lwval" class="tabcontent">
+<h1>Normal (Lightweight) API Validation</h1>
+<pre>
+val settings here, like
+turn on assistant toggle
+break on output toggle
+</pre>
+</div>
+
+<div id="hwval" class="tabcontent">
+<h1>Maximum (Heavyweight) API Validation</h1> 
+<pre>
+val settings here, like
+turn on assistant toggle
+break on output toggle
+</pre>
+</div>
+
+<div id="syncval" class="tabcontent">
+<h1>Synchonization Validation</h1> 
+<pre>
+val settings here, like
+turn on assistant toggle
+break on output toggle
+???  I don't know anything about Sync Val
+</pre>
+</div>
+
+<div id="gpuavval" class="tabcontent">
+<h1>GPU-Assisted Shader Validation</h1> 
+<pre>
+val settings here, like
+turn on assistant toggle
+break on output toggle
+???  I don't know anything about what can be configured in GPU AV
+</pre>
+</div>
+
+<div id="advanced" class="tabcontent" >
+
+<table style='width:512px;margin:0;padding:0;border:0;border-spacing:0px'>
+
+<thead style='display:block;'>
+<tr>
+    <th></th>
+    <th width="100%"></th>
+    <th class="rotate"><div><span>enable</span></div></th>
+    <th class="rotate"><div><span>don't&nbsp;care</span></div></th>
+    <th class="rotate"><div><span>disable</span></div></th>
+</tr>
+
+</thead>
+
+<tbody style='overflow-y:scroll;height:400px;display:block;'>
+<tr>
+    <th></th>
+    <th width="100%">layer</th>
+    <th><button type="button" id="enable_all" onclick="set_all_layers(0);"></button></th>
+    <th><button type="button" id="dontcare_all" onclick="set_all_layers(1);"></button></th>
+    <th><button type="button" id="disable_all" onclick="set_all_layers(2);"></button></th>
+</tr>
+
+<tr style='background-color:#dddddd; margin:0;padding:0;border:0;'>
+    <td style="text-align:center; min-width:20px; padding: 0;border: none;background: none;" class="layer" valign="top" id="layer0_button" onclick="expand('layer0');">+</td>
+    <td style="width: 99%;">= Khronos: Validation
+
+    <div id="layer0_settings" hidden size="100%" style="border: 1px solid black;">
+    <table>
+        <tr><td>
+            debug action:
+            <select onchange='mark_settings_changed();'>
+                <option value="break">break</option>
+                <option value="callback">callback</option>
+                <option value="ignore">ignore</option>
+                <option value="log">log message</option>
+                <option value="debug">debug output</option>
+            </select>
+        </td></tr>
+        <tr><td>
+            disables:<br>
+            <div style="margin-left: 40px">
+            <input type="checkbox" name="layer0_setting_disables" value="validation_check_disable_destroy_pipeline" onchange='mark_settings_changed();'>checking destruction of pipelines<br>
+            <input type="checkbox" name="layer0_setting_disables" value="vk_validation_feature_disable_thread_safety_ext" onchange='mark_settings_changed();'>thread safety checks<br>
+            <input type="checkbox" name="layer0_setting_disables" value="vk_validation_feature_disable_handle_wrapping" onchange='mark_settings_changed();'>handle wrapping<br>
+            <input type="checkbox" name="layer0_setting_disables" value="vk_validation_feature_disable_core_checks_ext" onchange='mark_settings_changed();'>core validation checks<br>
+            <input type="checkbox" name="layer0_setting_disables" value="vk_validation_feature_disable_api_parameters_ext" onchange='mark_settings_changed();'>stateless parameter checks<br>
+            <input type="checkbox" name="layer0_setting_disables" value=vk_validation_feature_disable_object_lifetimes_ext" onchange='mark_settings_changed();'>object tracking<br>
+            </div>
+
+        </td></tr>
+        <tr><td>
+            log filename: <input type="text" name="fname" value="stdout" onchange='mark_settings_changed();'>
+        </td></tr>
+        <tr><td>
+            report flags:<br>
+            <div style="margin-left: 40px">
+            <input type="checkbox" name="layer0_setting_reportflags" value="info" onchange='mark_settings_changed();'>info<br>
+            <input type="checkbox" name="layer0_setting_reportflags" value="warn" onchange='mark_settings_changed();'>warn<br>
+            <input type="checkbox" name="layer0_setting_reportflags" value="perf" onchange='mark_settings_changed();'>perf<br>
+            <input type="checkbox" name="layer0_setting_reportflags" value="error" onchange='mark_settings_changed();'>error<br>
+            <input type="checkbox" name="layer0_setting_reportflags" value="debug" onchange='mark_settings_changed();'>debug<br>
+            </div>
+        </td></tr>
+    </table>
+    </div>
+
+    <td valign="top"><input class="layer_enable_radio_enable" type="radio" name="layer0_enable" id="layer0_enable" value="enable" onchange='mark_settings_changed();'></td>
+    <td valign="top"><input class="layer_enable_radio_dontcare" type="radio" name="layer0_enable" id="layer0_enable" value="dontcare" checked onchange='mark_settings_changed();'></td>
+    <td valign="top"><input class="layer_enable_radio_disable" type="radio" name="layer0_enable" id="layer0_enable" value="disable" onchange='mark_settings_changed();'></td>
+</tr>
+
+<tr style='background-color:#ffffff; margin:0;padding:0;border:0;'>
+    <td style="text-align:center; min-width:20px; padding: 0;border: none;background: none;" class="layer" valign="top" id="layer1_button" onclick="expand('layer1');">+</td>
+    <td style="width: 99%;" draggable>= LunarG: Api Dump
+
+    <div id="layer1_settings" hidden size="100%" style="border: 1px solid black;">
+    <table size="100%">
+        <tr><td>
+            output format:
+            <select onchange='mark_settings_changed();'>
+                <option value="text">text</option>
+                <option value="html">html</option>
+            </select>
+        </td></tr>
+        <tr><td>
+            <input type="radio" name="layer1_setting_detailed_output" id="layer1_setting_detailed_output" value="enable">detailed output<br>
+        </td></tr>
+        <tr><td>
+            <input type="radio" name="layer1_setting_hide_addresses" id="layer1_setting_hide_addresses" value="enable">hide addresses<br>
+        </td></tr>
+        <tr><td>
+            <input type="radio" name="layer1_setting_output_to_file" id="layer1_setting_output_to_file" value="enable">output to file<br>
+        </td></tr>
+        <tr><td>
+            output filename: <input type="text" name="layer1_log_filename" value="vk_apidump.txt">
+        </td></tr>
+        <tr><td>
+            <input type="radio" name="layer1_setting_flush" id="layer1_setting_flush" value="enable">flush<br>
+        </td></tr>
+        <tr><td>
+            indent size: <input type="text" name="layer1_log_indent_size" value="4">
+        </td></tr>
+        <tr><td>
+            <input type="radio" name="layer1_setting_show_types" id="layer1_setting_show_types" value="enable">show types
+        </td></tr>
+        <tr><td>
+            name size: <input type="text" name="layer1_log_name_size" value="32">
+        </td></tr>
+        <tr><td>
+            type size: <input type="text" name="layer1_log_type_size" value="0">
+        </td></tr>
+        <tr><td>
+            <input type="radio" name="layer1_setting_use_spaces" id="layer1_setting_use_spaces" value="enable">use spaces<br>
+        </td></tr>
+        <tr><td>
+            <input type="radio" name="layer1_setting_show_shader" id="layer1_setting_show_shader" value="enable">show shader<br>
+        </td></tr>
+
+    </table>
+    </div>
+
+    <td valign="top"><input class="layer_enable_radio_enable" type="radio" name="layer1_enable" id="layer1_enable" value="enable"></td>
+    <td valign="top"><input class="layer_enable_radio_dontcare" type="radio" name="layer1_enable" id="layer1_enable" value="dontcare" checked></td>
+    <td valign="top"><input class="layer_enable_radio_disable" type="radio" name="layer1_enable" id="layer1_enable" value="disable"></td>
+</tr>
+
+<tr style='background-color:#dddddd; margin:0;padding:0;border:0;'>
+    <td style="text-align:center; min-width:20px; padding: 0;border: none;background: none;" class="layer" valign="top" id="layer2_button" onclick="expand('layer2');">+</td>
+    <td style="width: 99%;">= Foobar: Awesome Layer
+
+    <div id="layer2_settings" hidden size="100%" style="border: 1px solid black;">
+    <table size="100%">
+        <tr><td>
+            debug action:
+            <select onchange='mark_settings_changed();'>
+                <option value="break">break</option>
+                <option value="callback">callback</option>
+                <option value="ignore">ignore</option>
+                <option value="log">log message</option>
+                <option value="debug">debug output</option>
+            </select>
+        </td></tr>
+        <tr><td>
+            disables:<br>
+            <div style="margin-left: 40px">
+            <input type="checkbox" name="layer2_setting_disables" value="validation_check_disable_destroy_pipeline">checking destruction of pipelines<br>
+            <input type="checkbox" name="layer2_setting_disables" value="vk_validation_feature_disable_thread_safety_ext">thread safety checks<br>
+            <input type="checkbox" name="layer2_setting_disables" value="vk_validation_feature_disable_thread_safety_ext">handle wrapping<br>
+            <input type="checkbox" name="layer2_setting_disables" value="vk_validation_feature_disable_core_checks_ext">core validation checks<br>
+            <input type="checkbox" name="layer2_setting_disables" value="vk_validation_feature_disable_api_parameters_ext">stateless parameter checks<br>
+            <input type="checkbox" name="layer2_setting_disables" value=vk_validation_feature_disable_object_lifetimes_ext">object tracking<br>
+            </div>
+
+        </td></tr>
+        <tr><td>
+            log filename: <input type="text" name="fname" value="stdout">
+        </td></tr>
+        <tr><td>
+            report flags:<br>
+            <div style="margin-left: 40px">
+            <input type="checkbox" name="layer2_setting_reportflags" value="info">info<br>
+            <input type="checkbox" name="layer2_setting_reportflags" value="warn">warn<br>
+            <input type="checkbox" name="layer2_setting_reportflags" value="perf">perf<br>
+            <input type="checkbox" name="layer2_setting_reportflags" value="error">error<br>
+            <input type="checkbox" name="layer2_setting_reportflags" value="debug">debug<br>
+            </div>
+        </td></tr>
+    </table>
+    </div>
+
+    <td valign="top"><input class="layer_enable_radio_enable" type="radio" name="layer2_enable" id="layer2_enable" value="enable"></td>
+    <td valign="top"><input class="layer_enable_radio_dontcare" type="radio" name="layer2_enable" id="layer2_enable" value="dontcare" checked></td>
+    <td valign="top"><input class="layer_enable_radio_disable" type="radio" name="layer2_enable" id="layer2_enable" value="disable"></td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<button>Change Settings Location</button><br>
+
+<button id="save_button" onclick='save_settings();' disabled>Save</button>
+
+</body>
+</html>
